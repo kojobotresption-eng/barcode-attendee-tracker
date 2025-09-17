@@ -22,12 +22,16 @@ export default function AttendanceStats({ students, attendance }: AttendanceStat
     const exportData = attendance.map(record => ({
       'Student ID': record.student_id,
       'Student Name': record.student_name,
+      'Age': record.student.age || 'N/A',
+      'Group': record.student.group || 'N/A',
       'Subscription Type': record.student.subscription_type,
+      'Duration': record.student.duration || 'N/A',
+      'Level': record.student.level || 'N/A',
+      'Category': record.student.category || 'N/A',
+      'Attendance Type': record.student.attendance_type || 'N/A',
       'Date': record.date,
       'Time': record.time,
-      'Class': record.student.class_name || 'N/A',
-      'Email': record.student.email || 'N/A',
-      'Phone': record.student.phone || 'N/A',
+      'Notes': record.student.notes || 'N/A',
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);

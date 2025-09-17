@@ -15,8 +15,9 @@ export default function AttendanceList({ attendance }: AttendanceListProps) {
 
   const getSubscriptionColor = (type: string) => {
     switch (type) {
-      case 'VIP': return 'bg-gradient-primary text-primary-foreground';
-      case 'Premium': return 'bg-accent text-accent-foreground';
+      case 'core': return 'bg-gradient-primary text-primary-foreground';
+      case 'squad': return 'bg-accent text-accent-foreground';
+      case 'x': return 'bg-muted text-muted-foreground';
       default: return 'bg-secondary text-secondary-foreground';
     }
   };
@@ -51,7 +52,7 @@ export default function AttendanceList({ attendance }: AttendanceListProps) {
                     <h4 className="font-medium">{record.student_name}</h4>
                     <p className="text-sm text-muted-foreground">
                       ID: {record.student_id}
-                      {record.student.class_name && ` • ${record.student.class_name}`}
+                      {record.student.group && ` • Group: ${record.student.group}`}
                     </p>
                   </div>
                 </div>

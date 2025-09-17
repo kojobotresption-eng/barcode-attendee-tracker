@@ -11,11 +11,28 @@ import { GraduationCap, Scan, Users, BarChart3, Calendar, CheckCircle } from 'lu
 import { Student, AttendanceRecord } from '@/types';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { toast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
+import { loadStudentsFromCSV } from '@/utils/csvParser';
 
 const Index = () => {
   const [students, setStudents] = useLocalStorage<Student[]>('students', []);
   const [attendance, setAttendance] = useLocalStorage<AttendanceRecord[]>('attendance', []);
   const [isScannerActive, setIsScannerActive] = useState(false);
+
+  // Load real students data from CSV on first load
+  useEffect(() => {
+    if (students.length === 0) {
+      loadStudentsFromCSV().then(csvStudents => {
+        if (csvStudents.length > 0) {
+          setStudents(csvStudents);
+          toast({
+            title: "Students Loaded!",
+            description: `${csvStudents.length} students imported from CSV data.`,
+          });
+        }
+      });
+    }
+  }, [students.length, setStudents]);
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -208,21 +225,21 @@ const Index = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {['Basic', 'Premium', 'VIP'].map((type) => {
+                    {['squad', 'core', 'x'].map((type) => {
                       const count = students.filter(s => s.subscription_type === type && s.is_active).length;
                       const percentage = students.length > 0 ? Math.round((count / students.length) * 100) : 0;
                       
                       return (
                         <div key={type} className="space-y-2">
                           <div className="flex justify-between">
-                            <span className="font-medium">{type}</span>
+                            <span className="font-medium capitalize">{type}</span>
                             <span className="text-sm text-muted-foreground">{count} students</span>
                           </div>
                           <div className="w-full bg-secondary rounded-full h-2">
                             <div
                               className={`h-2 rounded-full ${
-                                type === 'VIP' ? 'bg-gradient-primary' :
-                                type === 'Premium' ? 'bg-accent' : 'bg-muted-foreground'
+                                type === 'core' ? 'bg-gradient-primary' :
+                                type === 'squad' ? 'bg-accent' : 'bg-muted-foreground'
                               }`}
                               style={{ width: `${percentage}%` }}
                             />

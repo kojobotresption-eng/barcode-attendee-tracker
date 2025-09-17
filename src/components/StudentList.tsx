@@ -16,8 +16,9 @@ export default function StudentList({ students, onToggleActive }: StudentListPro
 
   const getSubscriptionColor = (type: string) => {
     switch (type) {
-      case 'VIP': return 'bg-gradient-primary text-primary-foreground';
-      case 'Premium': return 'bg-accent text-accent-foreground';
+      case 'core': return 'bg-gradient-primary text-primary-foreground';
+      case 'squad': return 'bg-accent text-accent-foreground';
+      case 'x': return 'bg-muted text-muted-foreground';
       default: return 'bg-secondary text-secondary-foreground';
     }
   };
@@ -56,24 +57,15 @@ export default function StudentList({ students, onToggleActive }: StudentListPro
           </p>
           
           <div className="space-y-1">
-            {student.email && (
-              <p className="text-sm flex items-center gap-2 text-muted-foreground">
-                <Mail className="w-3 h-3" />
-                {student.email}
-              </p>
-            )}
-            {student.phone && (
-              <p className="text-sm flex items-center gap-2 text-muted-foreground">
-                <Phone className="w-3 h-3" />
-                {student.phone}
-              </p>
-            )}
-            {student.class_name && (
-              <p className="text-sm flex items-center gap-2 text-muted-foreground">
-                <GraduationCap className="w-3 h-3" />
-                {student.class_name}
-              </p>
-            )}
+            <div className="text-sm text-muted-foreground">
+              Group: {student.group || 'N/A'}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Age: {student.age || 'N/A'}
+            </div>
+            <div className="text-sm text-muted-foreground">
+              Category: {student.category || 'N/A'}
+            </div>
           </div>
         </div>
         

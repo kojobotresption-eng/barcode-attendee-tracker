@@ -16,10 +16,17 @@ export default function StudentForm({ onAddStudent }: StudentFormProps) {
   const [formData, setFormData] = useState({
     student_id: '',
     name: '',
-    email: '',
-    phone: '',
-    class_name: '',
-    subscription_type: 'Basic' as Student['subscription_type'],
+    age: 0,
+    group: '',
+    parent_id: '',
+    subscription_type: 'squad' as Student['subscription_type'],
+    duration: '',
+    level: 0,
+    category: 'First' as Student['category'],
+    attendance_type: 'Offline' as Student['attendance_type'],
+    subscription_start: '',
+    subscription_end: '',
+    notes: '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,10 +49,17 @@ export default function StudentForm({ onAddStudent }: StudentFormProps) {
     setFormData({
       student_id: '',
       name: '',
-      email: '',
-      phone: '',
-      class_name: '',
-      subscription_type: 'Basic',
+      age: 0,
+      group: '',
+      parent_id: '',
+      subscription_type: 'squad',
+      duration: '',
+      level: 0,
+      category: 'First',
+      attendance_type: 'Offline',
+      subscription_start: '',
+      subscription_end: '',
+      notes: '',
     });
 
     toast({
@@ -90,56 +104,126 @@ export default function StudentForm({ onAddStudent }: StudentFormProps) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="age">Age</Label>
               <Input
-                id="email"
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                placeholder="Enter email"
+                id="age"
+                type="number"
+                value={formData.age}
+                onChange={(e) => setFormData(prev => ({ ...prev, age: parseInt(e.target.value) || 0 }))}
+                placeholder="Enter age"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="group">Group</Label>
               <Input
-                id="phone"
-                value={formData.phone}
-                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                placeholder="Enter phone number"
+                id="group"
+                value={formData.group}
+                onChange={(e) => setFormData(prev => ({ ...prev, group: e.target.value }))}
+                placeholder="Enter group (e.g., T9)"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="class_name">Class</Label>
+              <Label htmlFor="parent_id">Parent ID</Label>
               <Input
-                id="class_name"
-                value={formData.class_name}
-                onChange={(e) => setFormData(prev => ({ ...prev, class_name: e.target.value }))}
-                placeholder="Enter class name"
+                id="parent_id"
+                value={formData.parent_id}
+                onChange={(e) => setFormData(prev => ({ ...prev, parent_id: e.target.value }))}
+                placeholder="Enter parent ID"
               />
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="subscription_type">Subscription Type</Label>
+              <Label htmlFor="duration">Duration</Label>
+              <Input
+                id="duration"
+                value={formData.duration}
+                onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
+                placeholder="Enter duration (e.g., شهر, ٣ شهور)"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="level">Level</Label>
+              <Input
+                id="level"
+                type="number"
+                value={formData.level}
+                onChange={(e) => setFormData(prev => ({ ...prev, level: parseInt(e.target.value) || 0 }))}
+                placeholder="Enter level"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="category">Category</Label>
               <Select
-                value={formData.subscription_type}
-                onValueChange={(value: Student['subscription_type']) => 
-                  setFormData(prev => ({ ...prev, subscription_type: value }))
+                value={formData.category}
+                onValueChange={(value: Student['category']) => 
+                  setFormData(prev => ({ ...prev, category: value }))
                 }
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Basic">Basic</SelectItem>
-                  <SelectItem value="Premium">Premium</SelectItem>
-                  <SelectItem value="VIP">VIP</SelectItem>
+                  <SelectItem value="First">First</SelectItem>
+                  <SelectItem value="Second">Second</SelectItem>
+                  <SelectItem value="Third">Third</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="attendance_type">Attendance Type</Label>
+              <Select
+                value={formData.attendance_type}
+                onValueChange={(value: Student['attendance_type']) => 
+                  setFormData(prev => ({ ...prev, attendance_type: value }))
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Online">Online</SelectItem>
+                  <SelectItem value="Offline">Offline</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="notes">Notes</Label>
+            <Input
+              id="notes"
+              value={formData.notes}
+              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Enter notes (optional)"
+            />
+          </div>
+            
+          <div className="space-y-2">
+            <Label htmlFor="subscription_type">Subscription Type</Label>
+            <Select
+              value={formData.subscription_type}
+              onValueChange={(value: Student['subscription_type']) => 
+                setFormData(prev => ({ ...prev, subscription_type: value }))
+              }
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="squad">Squad</SelectItem>
+                <SelectItem value="core">Core</SelectItem>
+                <SelectItem value="x">X Package</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <Button type="submit" className="w-full" variant="gradient">
