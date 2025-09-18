@@ -14,7 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attendance: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          student_id: string
+          student_name: string
+          time: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          student_id: string
+          student_name: string
+          time?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          student_id?: string
+          student_name?: string
+          time?: string
+        }
+        Relationships: []
+      }
+      students: {
+        Row: {
+          age: number | null
+          attendance_type: string
+          category: string
+          created_at: string
+          duration: string
+          group_name: string
+          id: string
+          is_active: boolean
+          level: number
+          name: string
+          notes: string | null
+          parent_id: string | null
+          student_id: string
+          subscription_end: string | null
+          subscription_start: string | null
+          subscription_type: string
+          updated_at: string
+        }
+        Insert: {
+          age?: number | null
+          attendance_type: string
+          category: string
+          created_at?: string
+          duration: string
+          group_name: string
+          id?: string
+          is_active?: boolean
+          level: number
+          name: string
+          notes?: string | null
+          parent_id?: string | null
+          student_id: string
+          subscription_end?: string | null
+          subscription_start?: string | null
+          subscription_type: string
+          updated_at?: string
+        }
+        Update: {
+          age?: number | null
+          attendance_type?: string
+          category?: string
+          created_at?: string
+          duration?: string
+          group_name?: string
+          id?: string
+          is_active?: boolean
+          level?: number
+          name?: string
+          notes?: string | null
+          parent_id?: string | null
+          student_id?: string
+          subscription_end?: string | null
+          subscription_start?: string | null
+          subscription_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
