@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import StudentProfile from '@/components/StudentProfile';
 import { Student, AttendanceRecord } from '@/types';
-import { useSupabaseData } from '@/hooks/useSupabaseData';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, AlertCircle } from 'lucide-react';
@@ -10,7 +10,8 @@ import { ArrowLeft, AlertCircle } from 'lucide-react';
 const StudentProfilePage = () => {
   const { studentId } = useParams();
   const navigate = useNavigate();
-  const { students, attendance, loading } = useSupabaseData();
+  const [students] = useLocalStorage<Student[]>('students', []);
+  const [attendance] = useLocalStorage<AttendanceRecord[]>('attendance', []);
   const [student, setStudent] = useState<Student | null>(null);
 
   useEffect(() => {
@@ -19,17 +20,6 @@ const StudentProfilePage = () => {
       setStudent(foundStudent || null);
     }
   }, [studentId, students]);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري تحميل البيانات...</p>
-        </div>
-      </div>
-    );
-  }
 
   if (!student) {
     return (

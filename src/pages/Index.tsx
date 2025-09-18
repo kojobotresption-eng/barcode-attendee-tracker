@@ -9,16 +9,34 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { GraduationCap, Scan, Users, BarChart3, Calendar, CheckCircle } from 'lucide-react';
 import { Student, AttendanceRecord } from '@/types';
-import { useSupabaseData } from '@/hooks/useSupabaseData';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { toast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
+import { loadStudentsFromCSV } from '@/utils/csvParser';
 
 const Index = () => {
-  const { students, attendance, loading, addStudent, addAttendance } = useSupabaseData();
+  const [students, setStudents] = useLocalStorage<Student[]>('students', []);
+  const [attendance, setAttendance] = useLocalStorage<AttendanceRecord[]>('attendance', []);
   const [isScannerActive, setIsScannerActive] = useState(false);
+
+  // Load real students data from CSV on first load
+  useEffect(() => {
+    if (students.length === 0) {
+      loadStudentsFromCSV().then(csvStudents => {
+        if (csvStudents.length > 0) {
+          setStudents(csvStudents);
+          toast({
+            title: "Students Loaded!",
+            description: `${csvStudents.length} students imported from CSV data.`,
+          });
+        }
+      });
+    }
+  }, [students.length, setStudents]);
 
   const generateId = () => Math.random().toString(36).substr(2, 9);
 
-  const handleAddStudent = async (studentData: Omit<Student, 'id' | 'created_at'>) => {
+  const handleAddStudent = (studentData: Omit<Student, 'id' | 'created_at'>) => {
     // Check if student ID already exists
     if (students.some(s => s.student_id === studentData.student_id)) {
       toast({
@@ -29,30 +47,26 @@ const Index = () => {
       return;
     }
 
-    const result = await addStudent(studentData);
-    if (result.success) {
-      toast({
-        title: "Student Added!",
-        description: `${studentData.name} has been added successfully.`,
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to add student.",
-        variant: "destructive",
-      });
-    }
+    const newStudent: Student = {
+      ...studentData,
+      id: generateId(),
+      created_at: new Date().toISOString(),
+    };
+
+    setStudents(prev => [...prev, newStudent]);
   };
 
-  const handleToggleStudentActive = async (studentId: string) => {
-    // This functionality would need to be implemented in Supabase hook
-    toast({
-      title: "Feature Coming Soon",
-      description: "Student activation toggle will be implemented soon.",
-    });
+  const handleToggleStudentActive = (studentId: string) => {
+    setStudents(prev =>
+      prev.map(student =>
+        student.id === studentId
+          ? { ...student, is_active: !student.is_active }
+          : student
+      )
+    );
   };
 
-  const handleAttendanceEntry = async (scannedId: string) => {
+  const handleAttendanceEntry = (scannedId: string) => {
     const student = students.find(s => s.student_id === scannedId && s.is_active);
     
     if (!student) {
@@ -65,6 +79,8 @@ const Index = () => {
     }
 
     const today = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    const currentTime = now.toTimeString().split(' ')[0];
 
     // Check for duplicate attendance today
     const existingAttendance = attendance.find(
@@ -80,31 +96,24 @@ const Index = () => {
       return;
     }
 
-    const result = await addAttendance(scannedId, student.name);
-    if (result.success) {
-      toast({
-        title: "Attendance Recorded!",
-        description: `${student.name} marked present successfully.`,
-      });
-    } else {
-      toast({
-        title: "Error",
-        description: "Failed to record attendance.",
-        variant: "destructive",
-      });
-    }
-  };
+    // Record attendance
+    const newAttendance: AttendanceRecord = {
+      id: generateId(),
+      student_id: scannedId,
+      student_name: student.name,
+      date: today,
+      time: currentTime,
+      created_at: new Date().toISOString(),
+      student: student,
+    };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground">جاري تحميل البيانات...</p>
-        </div>
-      </div>
-    );
-  }
+    setAttendance(prev => [...prev, newAttendance]);
+    
+    toast({
+      title: "Attendance Recorded!",
+      description: `${student.name} marked present at ${currentTime}.`,
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">

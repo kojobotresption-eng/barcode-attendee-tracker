@@ -1,11 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, User, Calendar, Clock, BarChart3, Users, QrCode, Download } from 'lucide-react';
+import { ArrowLeft, User, Calendar, Clock, BarChart3, Users } from 'lucide-react';
 import { Student, AttendanceRecord } from '@/types';
 import { useNavigate } from 'react-router-dom';
-import QRCode from 'qrcode';
-import { useState } from 'react';
 
 interface StudentProfileProps {
   student: Student;
@@ -14,33 +12,6 @@ interface StudentProfileProps {
 
 export default function StudentProfile({ student, attendance }: StudentProfileProps) {
   const navigate = useNavigate();
-  const [qrCodeUrl, setQrCodeUrl] = useState<string>('');
-
-  const generateQRCode = async () => {
-    try {
-      const qrData = `STUDENT:${student.student_id}:${student.name}`;
-      const url = await QRCode.toDataURL(qrData, {
-        width: 300,
-        margin: 2,
-        color: {
-          dark: '#000000',
-          light: '#FFFFFF'
-        }
-      });
-      setQrCodeUrl(url);
-    } catch (error) {
-      console.error('Error generating QR code:', error);
-    }
-  };
-
-  const downloadQRCode = () => {
-    if (qrCodeUrl) {
-      const link = document.createElement('a');
-      link.download = `QR_${student.name}_${student.student_id}.png`;
-      link.href = qrCodeUrl;
-      link.click();
-    }
-  };
   
   // Filter attendance for this student
   const studentAttendance = attendance
@@ -90,55 +61,25 @@ export default function StudentProfile({ student, attendance }: StudentProfilePr
   return (
     <div className="min-h-screen bg-background p-4 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
-          <Button 
-            onClick={() => navigate('/')} 
-            variant="outline" 
-            size="icon"
-            className="shrink-0"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="w-6 h-6 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold">{student.name}</h1>
-              <p className="text-muted-foreground">Student Profile & Attendance History</p>
-            </div>
+      <div className="flex items-center gap-4 mb-6">
+        <Button 
+          onClick={() => navigate('/')} 
+          variant="outline" 
+          size="icon"
+          className="shrink-0"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+            <User className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h1 className="text-2xl font-bold">{student.name}</h1>
+            <p className="text-muted-foreground">Student Profile & Attendance History</p>
           </div>
         </div>
-        <Button onClick={generateQRCode} variant="default">
-          <QrCode className="w-4 h-4 mr-2" />
-          إنشاء QR Code
-        </Button>
       </div>
-
-      {/* QR Code Section */}
-      {qrCodeUrl && (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <QrCode className="w-5 h-5" />
-              QR Code للطالب
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-center">
-            <div className="mb-4">
-              <img src={qrCodeUrl} alt="QR Code" className="mx-auto border rounded-lg" />
-            </div>
-            <p className="text-sm text-muted-foreground mb-4">
-              يمكن مسح هذا الكود لتسجيل حضور الطالب
-            </p>
-            <Button onClick={downloadQRCode} variant="outline">
-              <Download className="w-4 h-4 mr-2" />
-              تحميل QR Code
-            </Button>
-          </CardContent>
-        </Card>
-      )}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Student Information */}
