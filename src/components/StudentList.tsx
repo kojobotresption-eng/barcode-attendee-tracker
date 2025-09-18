@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Users, Mail, Phone, GraduationCap, ToggleLeft, ToggleRight } from 'lucide-react';
+import { Users, Mail, Phone, GraduationCap, ToggleLeft, ToggleRight, Eye } from 'lucide-react';
 import { Student } from '@/types';
 import { toast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface StudentListProps {
   students: Student[];
@@ -11,6 +12,7 @@ interface StudentListProps {
 }
 
 export default function StudentList({ students, onToggleActive }: StudentListProps) {
+  const navigate = useNavigate();
   const activeStudents = students.filter(s => s.is_active);
   const inactiveStudents = students.filter(s => !s.is_active);
 
@@ -69,23 +71,33 @@ export default function StudentList({ students, onToggleActive }: StudentListPro
           </div>
         </div>
         
-        <Button
-          onClick={() => handleToggleActive(student)}
-          variant={student.is_active ? "outline" : "success"}
-          size="sm"
-        >
-          {student.is_active ? (
-            <>
-              <ToggleLeft className="w-4 h-4" />
-              Deactivate
-            </>
-          ) : (
-            <>
-              <ToggleRight className="w-4 h-4" />
-              Activate
-            </>
-          )}
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => navigate(`/student/${student.student_id}`)}
+            variant="outline"
+            size="sm"
+          >
+            <Eye className="w-4 h-4" />
+            Profile
+          </Button>
+          <Button
+            onClick={() => handleToggleActive(student)}
+            variant={student.is_active ? "outline" : "success"}
+            size="sm"
+          >
+            {student.is_active ? (
+              <>
+                <ToggleLeft className="w-4 h-4" />
+                Deactivate
+              </>
+            ) : (
+              <>
+                <ToggleRight className="w-4 h-4" />
+                Activate
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -13,6 +13,22 @@ export default function AttendanceList({ attendance }: AttendanceListProps) {
     .filter(record => record.date === today)
     .sort((a, b) => b.time.localeCompare(a.time));
 
+  const formatDateWithDay = (date: string) => {
+    const dateObj = new Date(date);
+    const days = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const dayName = days[dateObj.getDay()];
+    return `${dayName}, ${dateObj.toLocaleDateString('ar-EG')}`;
+  };
+
+  const formatTime = (time: string) => {
+    const timeObj = new Date(`2000-01-01T${time}`);
+    return timeObj.toLocaleTimeString('ar-EG', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  };
+
   const getSubscriptionColor = (type: string) => {
     switch (type) {
       case 'core': return 'bg-gradient-primary text-primary-foreground';
@@ -64,7 +80,10 @@ export default function AttendanceList({ attendance }: AttendanceListProps) {
                   <div className="text-right">
                     <div className="text-sm font-medium flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {record.time}
+                      {formatTime(record.time)}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      {formatDateWithDay(record.date)}
                     </div>
                   </div>
                 </div>
